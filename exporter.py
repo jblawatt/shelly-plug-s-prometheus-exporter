@@ -2,6 +2,7 @@ from prometheus_client import start_http_server, Metric, REGISTRY
 import requests
 import os
 import time
+import logging
 from urllib.parse import urlparse
 
 class ShellyMetricsCollector:
@@ -161,6 +162,8 @@ class GroupedmetricsCollector:
 
 
 if __name__ == "__main__":
+
+    logging.basicConfig(level=logging.DEBUG)
 
     port = os.getenv("PORT")
     endpoints = os.getenv("SHELLY_ENDPOINTS")
