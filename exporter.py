@@ -131,33 +131,31 @@ class ShellyPlugSCollector:
 
 class GroupedmetricsCollector:
     def __init__(self, endpoints):
-        self.endpoint = endpoints
-        self.meter_metric = Metric("meter_0", "Meter 0", "summary")
-        self.relay_metric = Metric("relay_0", "relay 0", "summary")
-        self.status_metric = Metric("status", "Status", "summary")
-        self.settings_metric = Metric("status", "Status", "summary")
-        self.collectors = [
-            ShellyPlugSCollector(
-                endpoint,
-                self.meter_metric,
-                self.relay_metric,
-                self.status_metric,
-                self.settings_metric,
-            )
-            for endpoint in endpoints
-        ]
-
-    def run_collectors(self):
-        for c in self.collectors:
-            c.collect()
+        self.endpoints = endpoints
 
     def collect(self):
-        self.run_collectors()
+        meter_metric = Metric("meter_0", "Meter 0", "summary")
+        relay_metric = Metric("relay_0", "relay 0", "summary")
+        status_metric = Metric("status", "Status", "summary")
+        settings_metric = Metric("status", "Status", "summary")
+        for endpoint in self.endpoints:
+            collector = ShellyPlugSCollector(
+                endpoint,
+                meter_metric,
+                relay_metric,
+                status_metric,
+                settings_metric,
+            )
+            try:
+                collector.collect()
+            except Exception as error:
+                print(f"error collecting: {error}")
+
         yield from [
-            self.meter_metric,
-            self.relay_metric,
-            self.status_metric,
-            self.settings_metric,
+            meter_metric,
+            relay_metric,
+            status_metric,
+            settings_metric,
         ]
 
 
